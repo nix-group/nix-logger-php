@@ -10,7 +10,7 @@ class Item
     private $timestamp;
 
     /**
-     * @var Severity|null The severity of this event
+     * @var string The level
      */
     private $level;
 
@@ -41,6 +41,8 @@ class Item
     private $extraData;
 
     private $sdk;
+    
+    private $slackChannel;
 
     public function __construct()
     {
@@ -207,5 +209,29 @@ class Item
     public function getSdk()
     {
         return $this->sdk;
+    }
+
+    /**
+     * Set Slack channel
+     *
+     * @param  string  $slackChannel slackChannel
+     * 
+     * @return $this
+     */
+    public function setSlackChannel(string $slackChannel)
+    {
+        $this->slackChannel = $slackChannel;
+
+        return $this;
+    }
+
+    /**
+     * Get the custom metadata to send to NixLogger.
+     *
+     * @return string
+     */
+    public function getSlackChannel()
+    {
+        return $this->slackChannel;
     }
 }

@@ -26,6 +26,9 @@ final class PayloadSerializer implements PayloadSerializerInterface
             'extraData' => $item->getExtraData(),
             'sdk' => $item->getSdk(),
         ];
+        if ($item->getSlackChannel()) {
+            $payload['slackChannel'] = $item->getSlackChannel();
+        }
 
         return sprintf('%s', Helper::encode($payload));
     }

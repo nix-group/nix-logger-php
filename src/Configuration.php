@@ -9,7 +9,7 @@ class Configuration
     /**
      * @var string
      */
-    private $endpoint = 'aHR0cHM6Ly9hcGkubml4LWxvZ2dlci5kdWN4aW5oLmNvbS9hcGkvdjE=';
+    private $endpoint = 'aHR0cHM6Ly9hcGkubml4LWxvZ2dlci5uam5kZXguY29tL2FwaS92MQ==';
 
     /**
      * @var string
@@ -66,6 +66,8 @@ class Configuration
 
     protected $runningMode;
 
+    protected $slackChannel;
+
     /**
      * Create a new config instance.
      *
@@ -76,7 +78,7 @@ class Configuration
      */
     public function __construct($apiKey)
     {
-        if (! is_string($apiKey)) {
+        if (!is_string($apiKey)) {
             throw new InvalidArgumentException('Invalid API key');
         }
 
@@ -205,7 +207,7 @@ class Configuration
      */
     public function buildPostItemUri()
     {
-        return $this->endpoint().'/issues';
+        return $this->endpoint() . '/issues';
     }
 
     /**
@@ -218,7 +220,7 @@ class Configuration
         return [
             'Content-Type: application/json',
             'Accept: application/json',
-            'api-key: '.$this->apiKey,
+            'api-key: ' . $this->apiKey,
         ];
     }
 
@@ -320,11 +322,11 @@ class Configuration
     {
         $disabled = explode(',', ini_get('disable_functions'));
 
-        if (function_exists('php_uname') && ! in_array('php_uname', $disabled, true)) {
+        if (function_exists('php_uname') && !in_array('php_uname', $disabled, true)) {
             return ['hostname' => php_uname('n')];
         }
 
-        if (function_exists('gethostname') && ! in_array('gethostname', $disabled, true)) {
+        if (function_exists('gethostname') && !in_array('gethostname', $disabled, true)) {
             return ['hostname' => gethostname()];
         }
 
@@ -356,5 +358,29 @@ class Configuration
     public function getMetaData()
     {
         return $this->metaData;
+    }
+
+    /**
+     * Set Slack channel
+     *
+     * @param  string  $slackChannel slackChannel
+     * 
+     * @return $this
+     */
+    public function setSlackChannel(string $slackChannel)
+    {
+        $this->slackChannel = $slackChannel;
+
+        return $this;
+    }
+
+    /**
+     * Get the custom metadata to send to NixLogger.
+     *
+     * @return string
+     */
+    public function getSlackChannel()
+    {
+        return $this->slackChannel;
     }
 }

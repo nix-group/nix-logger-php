@@ -1,33 +1,27 @@
 {
-    "name": "nix-logger/nix-logger-laravel",
-    "description": "Nix Logger",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Duc Xinh",
-            "email": "ducxinh.it@gmail.com"
-        }
-    ],
-    "require": {
-        "php": "^8.1",
-        "psr/log": "^3.0",
-        "illuminate/contracts": "^9.0|^10.0",
-        "illuminate/support": "^9.0|^10.0",
-        "monolog/monolog": "^2 || ^3"
-    },
-    "autoload": {
-        "psr-4": {
-            "NixLogger\\": "src/"
-        }
-    },
-
-    "autoload-dev": {
-        "psr-4": {
-            "NixLogger\\": "tests/"
-        }
-    },
-    "require-dev": {
-        "laravel/pint": "^1.13"
+  "name": "nix-logger/nix-logger",
+  "description": "Nix Logger PHP",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Duc Xinh",
+      "email": "ducxinh.it@gmail.com"
     }
+  ],
+  "require": {
+    "php": "^8.1",
+    "psr/log": "^3.0",
+    "monolog/monolog": "^2 || ^3"
+  },
+  "autoload": {
+    "psr-4": {
+      "NixLogger\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "NixLogger\\": "tests/"
+    }
+  }
 }

@@ -95,6 +95,9 @@ class IssueResolver
             'identifier' => $this->config->getSdkIdentifier(),
             'version' => $this->config->getVersion(),
         ]);
+        if ($this->config->getSlackChannel()) {
+            $item->setSlackChannel($this->config->getSlackChannel());
+        }
 
         return $item;
     }

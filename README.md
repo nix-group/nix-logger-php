@@ -1,32 +1,33 @@
 ## Getting Started
 
 ### Installation
-Install the `nix-logger/nix-logger-laravel` package:
-
 ```bash
-composer require nix-logger/nix-logger-laravel
+composer require nix-logger/nix-logger
 ```
 
-### Update .env
-```bash
-# .env
-NIX_LOGGER_API_KEY=
-APP_ENV=
-NIX_LOGGER_LEVEL=critical,error,warning
-```
-
-### Add Log channel:
-In `config/logging.php`, add the `nix-logger` logging channel by adding the following under the channels key:
+### Setup
 ```php
-'stack' => [
-    'driver' => 'stack',
-    'channels' => ['single', 'nix-logger'],
-    'ignore_exceptions' => false,
-],
+use NixLogger\NixLogger;
 
-'nix-logger' => [
-  'driver' => 'custom',
-  'via' => \NixLogger\Logger\NixMonologLogger::class,
-  'api' => env('ROLLBAR_TOKEN'),
-],
+$config = [
+  // Required configuration
+  'api_key' => 'your_api_key',
+  // Optional configuration
+  'environment' => '<your-environment>',
+  'slack_channel' => '<your-slack-channel>',
+];
+NixLogger::init($config)
+```
+
+### Usage
+```php
+NixLogger::critical('some message');
+
+NixLogger::error('some message');
+
+NixLogger::warning('some message');
+
+NixLogger::info('some message');
+
+NixLogger::debug('some message');
 ```

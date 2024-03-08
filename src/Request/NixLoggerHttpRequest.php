@@ -2,8 +2,6 @@
 
 namespace NixLogger\Request;
 
-use Illuminate\Http\Request;
-
 class NixLoggerHttpRequest
 {
     private $url;
@@ -24,19 +22,61 @@ class NixLoggerHttpRequest
 
     private $cookies;
 
-    public function setLaravelRequest(Request $request)
+    public function setUrl($url): self
     {
-        $this->url = $request->fullUrl();
-        $this->httpMethod = $request->getMethod();
-        $this->params = $request->input();
-        $this->clientIp = $request->getClientIp();
-        $this->body = $request->all();
-        $this->userAgent = $request->header('User-Agent');
-        $this->headers = $request->headers->all();
-        $this->cookies = $request->cookies->all();
-
+        $this->url = $url;
         return $this;
     }
+
+    public function setHttpMethod($httpMethod): self
+    {
+        $this->httpMethod = $httpMethod;
+        return $this;
+    }
+
+    public function setParams($params): self
+    {
+        $this->params = $params;
+        return $this;
+    }
+
+    public function setBody($body): self
+    {
+        $this->body = $body;
+        return $this;
+    }
+
+    public function setClientIp($clientIp): self
+    {
+        $this->clientIp = $clientIp;
+        return $this;
+    }
+
+
+    public function setUserAgent($userAgent): self
+    {
+        $this->userAgent = $userAgent;
+        return $this;
+    }
+
+    public function setHeaders($headers): self
+    {
+        $this->headers = $headers;
+        return $this;
+    }
+
+    public function setSessions($session): self
+    {
+        $this->session = $session;
+        return $this;
+    }
+
+    public function setCookies($cookies): self
+    {
+        $this->cookies = $cookies;
+        return $this;
+    }
+
 
     public function getUrl()
     {

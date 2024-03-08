@@ -5,7 +5,7 @@ namespace NixLogger\Logger;
 use Monolog\Logger;
 use NixLogger\Handlers\NixLoggerHandler;
 
-class NixMonologLogger
+class NixLogger
 {
     /**
      * Create a custom Monolog instance.
@@ -16,7 +16,7 @@ class NixMonologLogger
     {
         $logger = new Logger('custom');
         $logger->pushHandler(new NixLoggerHandler());
-
+ 
         return $logger;
     }
 }
