@@ -45,7 +45,7 @@ class IssueResolver
             $message = "Exception: {$message} in {$file}:{$line}";
             $item->setData([
                 'message' => $message,
-                'trace' => $context['exception']->getTrace(),
+                'trace' => $this->buildTraces($context['exception']->getTrace()),
                 'type' => 'LogRecord@UnCaughtException',
             ]);
         } else {
@@ -82,6 +82,7 @@ class IssueResolver
                     'url' => $this->request->getUrl(),
                     'httpMethod' => $this->request->getHttpMethod(),
                     'params' => $this->request->getParams(),
+                    'body' => $this->request->getBody(),
                     'clientIp' => $this->request->getClientIp(),
                     'userAgent' => $this->request->getUserAgent(),
                     'headers' => $this->request->getHeaders(),
@@ -120,5 +121,45 @@ class IssueResolver
         }
 
         return array_slice($items, 2);
+    }
+
+    private function buildTraces($traces)
+    {
+        $frameTraces = [];
+        foreach ($traces as $key => $trace) {
+            $frameTraces[] = $this->buildTraceItem($trace);
+        }
+        return $frameTraces;
+    }
+
+    private function buildTraceItem($trace)
+    {
+        if ($trace['args'] && is_array($trace['args']) && count($trace['args'])) {
+            $trace['args'] = $this->buildTraceArgs($trace['args']);
+        }
+        return $trace;
+    }
+
+    private function buildTraceArgs($args)
+    {
+        $result = [];
+        foreach ($args as $key => $arg) {
+            $result[] = $this->buildTraceArgsItem($arg);
+        }
+        return $result;
+    }
+
+    private function buildTraceArgsItem($argsItem)
+    {
+        if (is_string($argsItem)) return $argsItem;
+        if (is_numeric($argsItem)) return $argsItem;
+        if (is_null($argsItem)) return $argsItem;
+        if (is_bool($argsItem)) return $argsItem;
+
+        if (is_object($argsItem)) {
+            return get_class($argsItem);
+        }
+
+        return 'undefined';
     }
 }
