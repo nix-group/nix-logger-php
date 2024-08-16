@@ -57,7 +57,7 @@ class HttpClient implements HttpClientInterface
             curl_setopt($curlHandle, \CURLOPT_SSL_VERIFYPEER, true);
         }
 
-        $httpProxy = false;
+        $httpProxy = null;
         if ($httpProxy !== null) {
             curl_setopt($curlHandle, \CURLOPT_PROXY, $httpProxy);
             curl_setopt($curlHandle, \CURLOPT_HEADEROPT, \CURLHEADER_SEPARATE);
