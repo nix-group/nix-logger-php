@@ -99,6 +99,8 @@ class Client
 
     /**
      * \Monolog\LogRecord | array: $record
+     * Laravel 9: array: $record
+     * Laravel >=10: LogRecord: $record
      */
     // public function reportUncaught(LogRecord $record): void
     public function reportUncaught($record): void

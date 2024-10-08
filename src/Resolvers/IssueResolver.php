@@ -33,7 +33,7 @@ class IssueResolver
 
     /**
      * @param  string  $level          Log Level
-     * @param  LogRecord|Throwable|string|Stringable  $messageError   The exception or message
+     * @param  LogRecord|array|Throwable|string|Stringable  $messageError   The exception or message
      */
     public function getPayload($level, $messageError, $context)
     {
@@ -57,15 +57,23 @@ class IssueResolver
             } else {
                 if ($messageError instanceof LogRecord) {
                     $item->setData([
-                        'message' => $this->parseMessageInCaughtException($messageError),
-                        'trace' => $this->parseTraceInCaughtException($messageError),
+                        'message' => $this->parseMessageInCaughtException($messageError->message),
+                        'trace' => $this->parseTraceInCaughtException($messageError->message),
                         'type' => 'LogRecord@CaughtException',
                     ]);
                 } else {
-                    $item->setData([
-                        'message' => Helper::encode($messageError),
-                        'type' => gettype($messageError),
-                    ]);
+                    if (is_array($messageError) && isset($messageError['message'])) {
+                        $item->setData([
+                            'message' => $this->parseMessageInCaughtException($messageError['message']),
+                            'trace' => $this->parseTraceInCaughtException($messageError['message']),
+                            'type' => 'LogRecord@CaughtException',
+                        ]);
+                    } else {
+                        $item->setData([
+                            'message' => Helper::encode($messageError),
+                            'type' => gettype($messageError),
+                        ]);
+                    }
                 }
             }
         }
@@ -103,19 +111,24 @@ class IssueResolver
         return $item;
     }
 
-    private function parseMessageInCaughtException(LogRecord $messageError)
+    /**
+     * string $message
+     */
+    private function parseMessageInCaughtException($message)
     {
-        $items = explode("\n", $messageError->message);
+        $items = explode("\n", $message);
         if (count($items)) {
             return $items[0];
         }
-
-        return $messageError->message;
+        return $message;
     }
 
-    private function parseTraceInCaughtException($messageError)
+    /**
+     * string $message
+     */
+    private function parseTraceInCaughtException($message)
     {
-        $items = explode("\n", $messageError->message);
+        $items = explode("\n", $message);
         if (count($items) <= 2) {
             return [];
         }
