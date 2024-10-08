@@ -8,7 +8,7 @@ use NixLogger\HttpClient\Request;
 use NixLogger\Request\NixLoggerHttpRequest;
 use NixLogger\Resolvers\IssueResolver;
 use NixLogger\Serializer\PayloadSerializer;
-use Psr\Log\LogLevel;
+use NixLogger\LogLevel;
 
 class Client
 {
@@ -97,9 +97,17 @@ class Client
         $this->log(LogLevel::DEBUG, $message, $context);
     }
 
-    public function reportUncaught(LogRecord $record): void
+    /**
+     * \Monolog\LogRecord | array: $record
+     */
+    // public function reportUncaught(LogRecord $record): void
+    public function reportUncaught($record): void
     {
-        $logLevel = strtolower($record->level->name);
+        if (is_array($record)) {
+            $logLevel = strtolower($record['level_name']);
+        } else {
+            $logLevel = strtolower($record->level->name);
+        }
         try {
             $this->report($logLevel, $record, $record['context'] ?? []);
         } catch (\Exception $e) {
