@@ -134,7 +134,7 @@ class IssueResolver
 
     private function buildTraceItem($trace)
     {
-        if ($trace['args'] && is_array($trace['args']) && count($trace['args'])) {
+        if (isset($trace['args']) && is_array($trace['args']) && count($trace['args'])) {
             $trace['args'] = $this->buildTraceArgs($trace['args']);
         }
         return $trace;
