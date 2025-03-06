@@ -17,7 +17,7 @@ class NixLogger
     {
         self::configure($config);
         self::updateRequest($config);
-        self::$client = new Client($config, self::$request);
+        self::$client = new Client(self::$config, self::$request);
     }
 
     public static function configure($config)
