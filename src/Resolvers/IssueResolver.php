@@ -3,6 +3,7 @@
 namespace NixLogger\Resolvers;
 
 use Exception;
+use Throwable;
 use Monolog\LogRecord;
 use NixLogger\Configuration;
 use NixLogger\Entities\Item;
@@ -38,14 +39,19 @@ class IssueResolver
     public function getPayload($level, $messageError, $context)
     {
         $item = new Item();
-        if (isset($context['exception']) && $context['exception'] instanceof Exception) {
-            $message = $context['exception']->getMessage();
-            $file = $context['exception']->getFile();
-            $line = $context['exception']->getLine();
+        if (
+            isset($context['exception']) 
+            // Throwable includes Exception and Error, Throwable: >= 7
+            && $context['exception'] instanceof Throwable
+        ) {
+            $exception = $context['exception'];
+            $message = $exception->getMessage();
+            $file = $exception->getFile();
+            $line = $exception->getLine();
             $message = "Exception: {$message} in {$file}:{$line}";
             $item->setData([
                 'message' => $message,
-                'trace' => $this->buildTraces($context['exception']->getTrace()),
+                'trace' => $this->buildTraces($exception->getTrace()),
                 'type' => 'LogRecord@UnCaughtException',
             ]);
         } else {

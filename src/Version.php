@@ -6,7 +6,7 @@ final class Version
 {
     public const SDK_IDENTIFIER = 'nix-logger.php';
 
-    public const SDK_VERSION = '1.0.0';
+    public const SDK_VERSION = '1.3.6';
 
     public static function getSdkIdentifier()
     {
