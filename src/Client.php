@@ -3,7 +3,9 @@
 namespace NixLogger;
 
 use Monolog\LogRecord;
+use NixLogger\Context\ExecutionContext;
 use NixLogger\HttpClient\HttpClient;
+use NixLogger\HttpClient\HttpClientInterface;
 use NixLogger\HttpClient\Request;
 use NixLogger\Request\NixLoggerHttpRequest;
 use NixLogger\Resolvers\IssueResolver;
@@ -27,11 +29,18 @@ class Client
     protected $request;
 
     /**
-     * The config instance.
+     * The http client instance.
      *
-     * @var HttpClient
+     * @var HttpClientInterface
      */
     protected $httpClient;
+
+    /**
+     * What the process is currently executing (command, job, scheduled task...).
+     *
+     * @var ExecutionContext
+     */
+    protected $executionContext;
 
     /**
      * Create New NixLogger Client
@@ -39,10 +48,13 @@ class Client
     public function __construct(
         Configuration $config,
         NixLoggerHttpRequest $request,
+        ?ExecutionContext $executionContext = null,
+        ?HttpClientInterface $httpClient = null,
     ) {
         $this->config = $config;
         $this->request = $request;
-        $this->httpClient = new HttpClient($this->config);
+        $this->executionContext = $executionContext ?? new ExecutionContext();
+        $this->httpClient = $httpClient ?? new HttpClient($this->config);
     }
 
     /**
@@ -60,7 +72,7 @@ class Client
             return;
         }
 
-        $issueResolver = new IssueResolver($this->config, $this->request);
+        $issueResolver = new IssueResolver($this->config, $this->request, $this->executionContext);
         $payload = $issueResolver->getPayload($level, $message, $context);
         $request = new Request();
         $request->setPayload(PayloadSerializer::serialize($payload));
@@ -123,6 +135,16 @@ class Client
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * Returns the execution context attached to every reported issue
+     *
+     * @return ExecutionContext
+     */
+    public function getExecutionContext()
+    {
+        return $this->executionContext;
     }
 
     /**

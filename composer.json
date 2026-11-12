@@ -20,7 +20,13 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "NixLogger\\": "tests/"
+      "NixLogger\\Tests\\": "tests/"
     }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.6|^10.5|^11.0"
+  },
+  "scripts": {
+    "test": "phpunit"
   }
 }

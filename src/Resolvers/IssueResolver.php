@@ -6,6 +6,7 @@ use Exception;
 use Throwable;
 use Monolog\LogRecord;
 use NixLogger\Configuration;
+use NixLogger\Context\ExecutionContext;
 use NixLogger\Entities\Item;
 use NixLogger\Request\NixLoggerHttpRequest;
 use NixLogger\Utils\Helper;
@@ -26,10 +27,21 @@ class IssueResolver
      */
     protected $request;
 
-    public function __construct(Configuration $config, NixLoggerHttpRequest $request)
-    {
+    /**
+     * The execution context instance.
+     *
+     * @var ExecutionContext|null
+     */
+    protected $executionContext;
+
+    public function __construct(
+        Configuration $config,
+        NixLoggerHttpRequest $request,
+        ?ExecutionContext $executionContext = null,
+    ) {
         $this->config = $config;
         $this->request = $request;
+        $this->executionContext = $executionContext;
     }
 
     /**
@@ -49,6 +61,11 @@ class IssueResolver
             $file = $exception->getFile();
             $line = $exception->getLine();
             $message = "Exception: {$message} in {$file}:{$line}";
+            // Log::error('Sync failed', ['exception' => $e]): keep 'Sync failed' as well
+            $logMessage = $this->getLogMessage($messageError);
+            if ($logMessage !== '' && $logMessage !== $exception->getMessage()) {
+                $message = "{$logMessage} | {$message}";
+            }
             $item->setData([
                 'message' => $message,
                 'trace' => $this->buildTraces($exception->getTrace()),
@@ -97,6 +114,9 @@ class IssueResolver
                 ],
             );
         }
+        if ($this->executionContext && ! $this->executionContext->isEmpty()) {
+            $item->setExtraData($this->executionContext->toArray());
+        }
         $item->setDeviceData($this->config->getDeviceData());
         $item->setSdk([
             'identifier' => $this->config->getSdkIdentifier(),
@@ -107,6 +127,21 @@ class IssueResolver
         }
 
         return $item;
+    }
+
+    /**
+     * @param  LogRecord|array|string|mixed  $messageError
+     */
+    private function getLogMessage($messageError): string
+    {
+        if ($messageError instanceof LogRecord) {
+            return (string) $messageError->message;
+        }
+        if (is_array($messageError) && isset($messageError['message']) && is_string($messageError['message'])) {
+            return $messageError['message'];
+        }
+
+        return is_string($messageError) ? $messageError : '';
     }
 
     private function parseMessageInCaughtException(LogRecord $messageError)
